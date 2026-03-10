@@ -3,6 +3,8 @@ import logging
 
 from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv())
+
+
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage
 ############################# 2、ChatPromptTemplate 用模板表示的对话上下文 #############################
