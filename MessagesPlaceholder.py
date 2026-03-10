@@ -7,6 +7,7 @@ _ = load_dotenv(find_dotenv())
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage
+from pydantic import SecretStr
 ############################# 2、ChatPromptTemplate 用模板表示的对话上下文 #############################
 from langchain_core.prompts import (
 ChatPromptTemplate,
@@ -15,9 +16,9 @@ SystemMessagePromptTemplate,
 MessagesPlaceholder,
 )
 
-api_key = os.getenv('OPENAI_API_KEY')
-base_url = os.getenv('OPENAI_BASE_URL')
-model_name = os.getenv('OPENAI_MODEL_NAME')
+api_key = os.getenv('OPENAI_API_KEY', '')
+base_url = os.getenv('OPENAI_BASE_URL', '')
+model_name = os.getenv('OPENAI_MODEL_NAME','gpt-3.5-turbo')
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("openai").setLevel(logging.WARNING)
@@ -34,10 +35,10 @@ try:
         base_url = base_url.strip().strip('"')
         print(f"使用自定义base_url: {base_url}")
         # 尝试使用自定义模型名称，如果默认的不可用
-        llm = ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name)
+        llm = ChatOpenAI(api_key=SecretStr(api_key) if api_key else None, base_url=base_url, model=model_name)
     else:
         print("使用默认OpenAI API")
-        llm = ChatOpenAI(api_key=api_key)
+        llm = ChatOpenAI(api_key=SecretStr(api_key) if api_key else None)
 except Exception as e:
     print(f"初始化LLM失败: {e}")
     print("请检查API密钥和base_url配置")
