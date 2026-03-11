@@ -5,7 +5,7 @@ from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())
 
-# https://zhuanlan.zhihu.com/p/1975225632200869294
+
 # 3.2.3 MessagesPlaceholder 把多轮对话变成模板
 
 from langchain_openai import ChatOpenAI
