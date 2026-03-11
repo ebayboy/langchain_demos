@@ -4,6 +4,7 @@ import logging
 from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv())
 
+# https://www.runoob.com/ai-agent/langchain-agent.html
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage
