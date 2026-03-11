@@ -4,6 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv())
 from langchain_openai import ChatOpenAI
 
+# # https://zhuanlan.zhihu.com/p/1975225632200869294
 # 3.1.1 LangChain 调用 OpenAI Chat 接口
 # 在 .env 文件中配置你的 url 以及 key 即可
 api_key = os.getenv("OPENAI_API_KEY")
