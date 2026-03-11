@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage
 
@@ -17,8 +17,9 @@ print(template.format(subject="小明"))
 #  1.2 调用大模型
 api_key = os.getenv("OPENAI_API_KEY")
 base_url = os.getenv("OPENAI_BASE_URL")
+mode_name = os.getenv("OPENAI_MODEL_NAME", "gpt-3.5-turbo")
 # 定义 LLM
-llm = ChatOpenAI(api_key=api_key, base_url=base_url)
+llm = ChatOpenAI(api_key=api_key, base_url=base_url, model=mode_name)
 # 通过 Prompt 调用 LLM
 ret = llm.invoke(template.format(subject="小明"))
 # 打印输出
