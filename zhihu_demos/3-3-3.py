@@ -2,6 +2,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 
 # 3.3.3 向量数据库与向量检索
@@ -14,18 +15,18 @@ import os
 
 load_dotenv(find_dotenv())
 
-# llm模型
-api_key = os.getenv("OPENAI_API_KEY")
-base_url = os.getenv("OPENAI_BASE_URL")
-model_name = os.getenv("OPENAI_MODEL_NAME") or "gpt-3.5-turbo"
-
+logging.basicConfig(level=logging.INFO)
 
 # embedding模型
-api_key_embeddings = os.getenv("OPENAI_API_KEY_EMBEDDINGS") or api_key
-base_url_embeddings = os.getenv("OPENAI_BASE_URL_EMBEDDINGS") or base_url
+api_key_embeddings = os.getenv("OPENAI_EMBEDDINGS_API_KEY")
+base_url_embeddings = os.getenv("OPENAI_EMBEDDINGS_BASE_URL")
 model_name_embeddings = (
-    os.getenv("OPENAI_MODEL_NAME_EMBEDDINGS") or "text-embedding-ada-002"
+    os.getenv("OPENAI_EMBEDDINGS_MODEL_NAME") or "text-embedding-ada-002"
 )
+
+logging.info(f"Using embedding model: {model_name_embeddings}")
+logging.info(f"Using embedding API key: {api_key_embeddings}")
+logging.info(f"Using embedding base URL: {base_url_embeddings}")
 
 from langchain_community.document_loaders import PyMuPDFLoader
 
@@ -38,14 +39,18 @@ text_splitter = RecursiveCharacterTextSplitter(
     length_function=len,
     add_start_index=True,
 )
-texts = text_splitter.create_documents([page.page_content for page in pages[:4]])
+texts = text_splitter.create_documents([page.page_content for page in pages[:10]])
 
-# 灌库
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
+embeddings = OpenAIEmbeddings(
+    model=model_name_embeddings,
+    api_key=SecretStr(api_key_embeddings) if api_key_embeddings else None,
+    base_url=base_url_embeddings,
+)
+
 db = FAISS.from_documents(texts, embeddings)
 # 检索 top-3 结果
 retriever = db.as_retriever(search_kwargs={"k": 3})
-docs = retriever.invoke("llama2有多少参数")
-for doc in docs:
-    print(doc.page_content)
+docs = retriever.invoke("获取版本信息")
+for i, doc in enumerate(docs):
+    print(f"+++++ doc[{i}]:", doc.page_content)
 print("----")
