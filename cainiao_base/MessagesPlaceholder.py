@@ -5,6 +5,7 @@ from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv())
 
 # https://www.runoob.com/ai-agent/langchain-agent.html
+# 示例 2：带记忆的对话链
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage
