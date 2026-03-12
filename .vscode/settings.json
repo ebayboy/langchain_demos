@@ -1,0 +1,16 @@
+{
+  "python-envs.defaultEnvManager": "ms-python.python:conda",
+  "python-envs.defaultPackageManager": "ms-python.python:conda",
+
+  "python.defaultInterpreterPath": "/usr/local/anaconda3/envs/langchain/bin/python",
+
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+
+  "python.analysis.extraPaths": [
+    "/usr/local/anaconda3/envs/langchain/lib/python3.12/site-packages"
+  ],
+
+  "editor.formatOnSave": true,
+  "python.formatting.provider": "black"
+}
