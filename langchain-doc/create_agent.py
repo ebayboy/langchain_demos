@@ -27,20 +27,20 @@ def send_email(recipient: str, subject: str, content: str) -> str:
     return f"已向 {recipient} 发送邮件，主题：{subject}"
 
 
-# 演示工具功能
+# 直接演示工具功能
 print("=== 工具演示 ===")
 
-# 演示搜索工具
+# 直接演示搜索工具
 print("\n1. 搜索工具演示:")
 search_result = search_web.invoke({"query": "AI 安全趋势"})
 print(f"搜索结果: {search_result}")
 
-# 演示数据分析工具
+# 直接演示数据分析工具
 print("\n2. 数据分析工具演示:")
 data_result = analyze_data.invoke({"data": "AI 安全数据集"})
 print(f"分析结果: {data_result}")
 
-# 演示邮件发送工具
+# 直接演示邮件发送工具
 print("\n3. 邮件发送工具演示:")
 email_result = send_email.invoke(
     {
@@ -55,10 +55,12 @@ print("\n=== 工具演示完成 ===")
 print("\n这些工具可以集成到 LangChain 代理中使用。")
 print("要使用实际的语言模型，需要设置相应的 API 密钥。")
 
+
+# ======================== 演示agent调用工具 =================
 # 配置API参数
 api_key = os.getenv("OPENAI_API_KEY")
 url_base = os.getenv("OPENAI_BASE_URL")
-model_name = os.getenv("OPENAI_MODEL_NAME", "gpt-3.5-turbo")
+model_name = os.getenv("OPENAI_MODEL_NAME")
 
 # 创建模型实例
 model = ChatOpenAI(
@@ -76,4 +78,11 @@ agent = create_agent(
 )
 
 result = agent.invoke({"messages": [{"role": "user", "content": "研究 AI 安全趋势"}]})
-print(f"任务完成！结果: {result}")
+
+# JSON格式化输出结果
+import json
+
+result = json.dumps(result, indent=2, ensure_ascii=False)
+print("\n=== 代理调用工具演示 ===")
+print(f"代理调用结果:\n{result}")
+print("\n代理成功调用了工具并返回了结果。")
