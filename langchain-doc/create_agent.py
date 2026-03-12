@@ -56,7 +56,7 @@ print("\n这些工具可以集成到 LangChain 代理中使用。")
 print("要使用实际的语言模型，需要设置相应的 API 密钥。")
 
 
-# ======================== 演示agent调用工具 =================
+# ======================== 演示模型调用工具 =================
 # 配置API参数
 api_key = os.getenv("OPENAI_API_KEY")
 url_base = os.getenv("OPENAI_BASE_URL")
@@ -66,23 +66,46 @@ model_name = os.getenv("OPENAI_MODEL_NAME")
 model = ChatOpenAI(
     api_key=SecretStr(api_key) if api_key else None,
     base_url=url_base,
-    model=model_name,
+    model=model_name or "gpt-3.5-turbo",
 )
 
-from langchain.agents import create_agent
+# 将工具绑定到模型
+tools = [search_web, analyze_data, send_email]
+model_with_tools = model.bind_tools(tools)
 
-agent = create_agent(
-    model=model,
-    tools=[search_web, analyze_data, send_email],
-    system_prompt="你是一个有帮助的研究助理。",
+# 创建提示模板
+prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "你是一个有帮助的研究助理，可以使用以下工具：搜索、数据分析、发送邮件。请根据用户请求选择合适的工具。",
+        ),
+        ("user", "{input}"),
+    ]
 )
 
-result = agent.invoke({"messages": [{"role": "user", "content": "研究 AI 安全趋势"}]})
+# 创建链
+chain = prompt | model_with_tools
+
+# 调用模型
+result = chain.invoke({"input": "研究 AI 安全趋势"})
 
 # JSON格式化输出结果
 import json
 
-result = json.dumps(result, indent=2, ensure_ascii=False)
-print("\n=== 代理调用工具演示 ===")
-print(f"代理调用结果:\n{result}")
-print("\n代理成功调用了工具并返回了结果。")
+# 处理结果，提取可序列化的部分
+if hasattr(result, "content"):
+    serializable_result = {"content": result.content, "tool_calls": []}
+    if hasattr(result, "tool_calls") and result.tool_calls:
+        for tool_call in result.tool_calls:
+            serializable_result["tool_calls"].append(
+                {"name": tool_call.get("name", ""), "args": tool_call.get("args", {})}
+            )
+else:
+    # 如果是其他格式，转换为字符串表示
+    serializable_result = str(result)
+
+result_json = json.dumps(serializable_result, indent=2, ensure_ascii=False)
+print("\n=== 模型调用工具演示 ===")
+print(f"模型调用结果:\n{result_json}")
+print("\n模型成功处理了请求并可能调用了工具。")
