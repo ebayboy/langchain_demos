@@ -21,6 +21,8 @@ def trim_messages(state: AgentState, runtime: Runtime) -> dict[str, Any] | None:
         return None  # No changes needed
 
     first_msg = messages[0]
+    # 如果为偶数：保留最后3条消息（messages[-3:]）
+    # 如果为奇数：保留最后4条消息（messages[-4:]）
     recent_messages = messages[-3:] if len(messages) % 2 == 0 else messages[-4:]
     new_messages = [first_msg] + recent_messages
 
