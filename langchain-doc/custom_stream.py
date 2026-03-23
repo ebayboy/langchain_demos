@@ -31,6 +31,12 @@ agent = create_agent(
 
 for chunk in agent.stream(
     {"messages": [{"role": "user", "content": "What is the weather in SF?"}]},
-    stream_mode="custom",  # [!code highlight]
+    stream_mode="custom",
 ):
     print("chunk:", chunk)
+
+# 获取并打印最终响应
+response = agent.invoke(
+    {"messages": [{"role": "user", "content": "What is the weather in SF?"}]}
+)
+print("Final response:", response)
