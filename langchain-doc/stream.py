@@ -31,5 +31,5 @@ for chunk in agent.stream(  # [!code highlight]
     stream_mode="updates",
 ):
     for step, data in chunk.items():
-        print(f"step: {step}")
+        print(f"\n==== step: {step} ====")
         print(f"content: {data['messages'][-1].content_blocks}")
